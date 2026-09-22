@@ -1,6 +1,7 @@
 const express = require("express");
-
 const router = express.Router();
+
+const db = require("../db");
 
 router.get("/", (req, res) => {
     res.json({
@@ -9,26 +10,46 @@ router.get("/", (req, res) => {
 });
 
 router.get("/notifications", (req, res) => {
-    res.json([
-        {
-            id: 1,
-            message: "Ambulance has been assigned",
-            status: "Sent"
-        },
-        {
-            id: 2,
-            message: "Hospital has been assigned",
-            status: "Sent"
+
+    db.query("SELECT * FROM notifications", (err, results) => {
+
+        if (err) {
+            return res.status(500).json({
+                message: "Database error",
+                error: err.message
+            });
         }
-    ]);
+
+        res.json(results);
+    });
 });
 
 router.post("/notifications", (req, res) => {
-    const notification = req.body;
 
-    res.json({
-        message: "Notification sent successfully",
-        notification: notification
+    const { message, status } = req.body;
+
+    const sql = `
+        INSERT INTO notifications (message, status)
+        VALUES (?, ?)
+    `;
+
+    db.query(sql, [message, status || "Sent"], (err, result) => {
+
+        if (err) {
+            return res.status(500).json({
+                message: "Database error",
+                error: err.message
+            });
+        }
+
+        res.json({
+            message: "Notification sent successfully",
+            notification: {
+                id: result.insertId,
+                message: message,
+                status: status || "Sent"
+            }
+        });
     });
 });
 

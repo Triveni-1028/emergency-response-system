@@ -1,21 +1,66 @@
 services:
 
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: "@btsarmy89101"
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d
+
   emergency-service:
     build: ./emergency-service
     ports:
       - "3001:3001"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: "@btsarmy89101"
+      DB_NAME: emergency_db
+      DB_PORT: 3306
+    depends_on:
+      - mysql
 
   ambulance-service:
     build: ./ambulance-service
     ports:
       - "3002:3002"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: "@btsarmy89101"
+      DB_NAME: ambulance_db
+      DB_PORT: 3306
+    depends_on:
+      - mysql
 
   hospital-service:
     build: ./hospital-service
     ports:
       - "3003:3003"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: "@btsarmy89101"
+      DB_NAME: hospital_db
+      DB_PORT: 3306
+    depends_on:
+      - mysql
 
   notification-service:
     build: ./notification-service
     ports:
       - "3004:3004"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: "@btsarmy89101"
+      DB_NAME: notification_db
+      DB_PORT: 3306
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:

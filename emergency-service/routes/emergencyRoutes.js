@@ -1,6 +1,7 @@
 const express = require("express");
-
 const router = express.Router();
+
+const db = require("../db");
 
 router.get("/", (req, res) => {
     res.json({
@@ -9,21 +10,20 @@ router.get("/", (req, res) => {
 });
 
 router.get("/emergencies", (req, res) => {
-    res.json([
-        {
-            id: 1,
-            type: "Medical Emergency",
-            location: "Mumbai",
-            status: "Pending"
-        },
-        {
-            id: 2,
-            type: "Road Accident",
-            location: "Thane",
-            status: "Assigned"
+
+    db.query("SELECT * FROM emergencies", (err, results) => {
+
+        if (err) {
+            return res.status(500).json({
+                message: "Database error",
+                error: err.message
+            });
         }
-    ]);
+
+        res.json(results);
+    });
 });
+
 router.get("/request-ambulance", async (req, res) => {
     try {
         const response = await fetch("http://ambulance-service:3002/ambulances");
@@ -52,4 +52,5 @@ router.get("/request-ambulance", async (req, res) => {
         });
     }
 });
+
 module.exports = router;

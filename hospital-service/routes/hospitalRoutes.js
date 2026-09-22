@@ -1,6 +1,7 @@
 const express = require("express");
-
 const router = express.Router();
+
+const db = require("../db");
 
 router.get("/", (req, res) => {
     res.json({
@@ -9,36 +10,36 @@ router.get("/", (req, res) => {
 });
 
 router.get("/hospitals", (req, res) => {
-    res.json([
-        {
-            id: 1,
-            name: "City Care Hospital",
-            location: "Mumbai",
-            availableBeds: 10,
-            emergencyAvailable: true
-        },
-        {
-            id: 2,
-            name: "LifeLine Hospital",
-            location: "Thane",
-            availableBeds: 5,
-            emergencyAvailable: true
+
+    db.query("SELECT * FROM hospitals", (err, results) => {
+
+        if (err) {
+            return res.status(500).json({
+                message: "Database error",
+                error: err.message
+            });
         }
-    ]);
+
+        res.json(results);
+    });
 });
+
 router.post("/notify", async (req, res) => {
     try {
-        const response = await fetch("http://notification-service:3004/notifications", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message: "Hospital is ready for emergency patient",
-                hospital: "City Care Hospital",
-                status: "Ready"
-            })
-        });
+        const response = await fetch(
+            "http://notification-service:3004/notifications",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: "Hospital is ready for emergency patient",
+                    hospital: "City Care Hospital",
+                    status: "Ready"
+                })
+            }
+        );
 
         const notification = await response.json();
 
@@ -54,4 +55,5 @@ router.post("/notify", async (req, res) => {
         });
     }
 });
+
 module.exports = router;

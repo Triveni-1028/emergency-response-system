@@ -1,6 +1,7 @@
 const express = require("express");
-
 const router = express.Router();
+
+const db = require("../db");
 
 router.get("/", (req, res) => {
     res.json({
@@ -9,21 +10,20 @@ router.get("/", (req, res) => {
 });
 
 router.get("/ambulances", (req, res) => {
-    res.json([
-        {
-            id: 1,
-            vehicleNumber: "MH01AB1234",
-            driver: "Rahul",
-            status: "Available"
-        },
-        {
-            id: 2,
-            vehicleNumber: "MH02CD5678",
-            driver: "Amit",
-            status: "Busy"
+
+    db.query("SELECT * FROM ambulances", (err, results) => {
+
+        if (err) {
+            return res.status(500).json({
+                message: "Database error",
+                error: err.message
+            });
         }
-    ]);
+
+        res.json(results);
+    });
 });
+
 router.get("/find-hospital", async (req, res) => {
     try {
         const response = await fetch("http://hospital-service:3003/hospitals");
@@ -31,9 +31,9 @@ router.get("/find-hospital", async (req, res) => {
         const hospitals = await response.json();
 
         const availableHospital = hospitals.find(
-            hospital =>
-                hospital.availableBeds > 0 &&
-                hospital.emergencyAvailable === true
+           hospital =>
+    hospital.availableBeds > 0 &&
+    hospital.emergencyAvailable === 1
         );
 
         if (!availableHospital) {
@@ -54,4 +54,5 @@ router.get("/find-hospital", async (req, res) => {
         });
     }
 });
+
 module.exports = router;
