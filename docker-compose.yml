@@ -1,0 +1,21 @@
+services:
+
+  emergency-service:
+    build: ./emergency-service
+    ports:
+      - "3001:3001"
+
+  ambulance-service:
+    build: ./ambulance-service
+    ports:
+      - "3002:3002"
+
+  hospital-service:
+    build: ./hospital-service
+    ports:
+      - "3003:3003"
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3004:3004"
