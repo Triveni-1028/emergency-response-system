@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Emergency Response Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+    <title>Emergency Response Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Emergency Response Management System</h1>
+    <p>Emergency Management Dashboard</p>
+</header>
+
+<main>
+
+    <!-- Dashboard -->
+    <section class="dashboard">
+
+        <div class="card">
+            <h2>🚨 Emergencies</h2>
+            <p id="emergencyCount">Loading...</p>
+            <button onclick="loadEmergencies()">View Emergencies</button>
+        </div>
+
+        <div class="card">
+            <h2>🚑 Ambulances</h2>
+            <p id="ambulanceCount">Loading...</p>
+            <button onclick="loadAmbulances()">View Ambulances</button>
+        </div>
+
+        <div class="card">
+            <h2>🏥 Hospitals</h2>
+            <p id="hospitalCount">Loading...</p>
+            <button onclick="loadHospitals()">View Hospitals</button>
+        </div>
+
+        <div class="card">
+            <h2>🔔 Notifications</h2>
+            <p id="notificationCount">Loading...</p>
+            <button onclick="loadNotifications()">View Notifications</button>
+        </div>
+
+    </section>
+
+
+    <!-- Add Records -->
+    <section class="actions">
+        <h2>Add Records</h2>
+
+        <div class="forms">
+
+            <div>
+                <h3>Add Emergency</h3>
+                <input id="emergencyType" placeholder="Emergency Type">
+                <input id="emergencyLocation" placeholder="Location">
+
+                <select id="emergencyStatus">
+                    <option>Pending</option>
+                    <option>Assigned</option>
+                    <option>Completed</option>
+                </select>
+
+                <button onclick="addEmergency()">Add Emergency</button>
+            </div>
+
+
+            <div>
+                <h3>Add Ambulance</h3>
+                <input id="vehicleNumber" placeholder="Vehicle Number">
+                <input id="driver" placeholder="Driver Name">
+
+                <select id="ambulanceStatus">
+                    <option>Available</option>
+                    <option>Busy</option>
+                </select>
+
+                <button onclick="addAmbulance()">Add Ambulance</button>
+            </div>
+
+
+            <div>
+                <h3>Add Hospital</h3>
+                <input id="hospitalName" placeholder="Hospital Name">
+                <input id="hospitalLocation" placeholder="Location">
+                <input id="availableBeds" type="number" placeholder="Available Beds">
+
+                <select id="emergencyAvailable">
+                    <option value="1">Emergency Available</option>
+                    <option value="0">Emergency Not Available</option>
+                </select>
+
+                <button onclick="addHospital()">Add Hospital</button>
+            </div>
+
+
+            <div>
+                <h3>Add Notification</h3>
+                <input id="notificationMessage" placeholder="Notification Message">
+
+                <select id="notificationStatus">
+                    <option>Sent</option>
+                    <option>Pending</option>
+                </select>
+
+                <button onclick="addNotification()">Add Notification</button>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- Emergency Actions -->
+    <section class="actions">
+
+        <h2>Emergency Actions</h2>
+
+        <input
+            id="actionSearch"
+            placeholder="Search emergency actions..."
+            onkeyup="searchActions()"
+        >
+
+        <div id="actionButtons">
+
+            <button onclick="requestAmbulance()">
+                🚑 Find Ambulance
+            </button>
+
+            <button onclick="findHospital()">
+                🏥 Find Hospital
+            </button>
+
+            <button onclick="sendNotification()">
+                🔔 Send Notification
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- System Response -->
+    <section class="result-section">
+
+        <h2>System Response</h2>
+
+        <div id="result">
+            Select an action to view the response.
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    <p>Emergency Response Management System</p>
+    <p>Microservices • Docker • Jenkins • MySQL</p>
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

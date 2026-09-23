@@ -9,10 +9,9 @@ router.get("/", (req, res) => {
     });
 });
 
+// Get hospitals
 router.get("/hospitals", (req, res) => {
-
     db.query("SELECT * FROM hospitals", (err, results) => {
-
         if (err) {
             return res.status(500).json({
                 message: "Database error",
@@ -24,6 +23,53 @@ router.get("/hospitals", (req, res) => {
     });
 });
 
+// Add hospital
+router.post("/hospitals", (req, res) => {
+    const {
+        name,
+        location,
+        availableBeds,
+        emergencyAvailable
+    } = req.body;
+
+    const sql = `
+        INSERT INTO hospitals
+        (name, location, availableBeds, emergencyAvailable)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [
+            name,
+            location,
+            availableBeds,
+            emergencyAvailable
+        ],
+        (err, result) => {
+
+            if (err) {
+                return res.status(500).json({
+                    message: "Database error",
+                    error: err.message
+                });
+            }
+
+            res.json({
+                message: "Hospital added successfully",
+                hospital: {
+                    id: result.insertId,
+                    name: name,
+                    location: location,
+                    availableBeds: availableBeds,
+                    emergencyAvailable: emergencyAvailable
+                }
+            });
+        }
+    );
+});
+
+// Hospital → Notification
 router.post("/notify", async (req, res) => {
     try {
         const response = await fetch(

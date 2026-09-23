@@ -61,6 +61,14 @@ services:
       DB_PORT: 3306
     depends_on:
       - mysql
-
+  frontend:
+    build: ./frontend
+    ports:
+        - "8081:80"
+    depends_on:
+      - emergency-service
+      - ambulance-service
+      - hospital-service
+      - notification-service
 volumes:
   mysql_data:

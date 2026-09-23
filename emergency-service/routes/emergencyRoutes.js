@@ -9,10 +9,9 @@ router.get("/", (req, res) => {
     });
 });
 
+// Get emergencies
 router.get("/emergencies", (req, res) => {
-
     db.query("SELECT * FROM emergencies", (err, results) => {
-
         if (err) {
             return res.status(500).json({
                 message: "Database error",
@@ -24,9 +23,45 @@ router.get("/emergencies", (req, res) => {
     });
 });
 
+// Add emergency
+router.post("/emergencies", (req, res) => {
+    const { type, location, status } = req.body;
+
+    const sql = `
+        INSERT INTO emergencies (type, location, status)
+        VALUES (?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [type, location, status || "Pending"],
+        (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    message: "Database error",
+                    error: err.message
+                });
+            }
+
+            res.json({
+                message: "Emergency added successfully",
+                emergency: {
+                    id: result.insertId,
+                    type: type,
+                    location: location,
+                    status: status || "Pending"
+                }
+            });
+        }
+    );
+});
+
+// Emergency → Ambulance
 router.get("/request-ambulance", async (req, res) => {
     try {
-        const response = await fetch("http://ambulance-service:3002/ambulances");
+        const response = await fetch(
+            "http://ambulance-service:3002/ambulances"
+        );
 
         const ambulances = await response.json();
 

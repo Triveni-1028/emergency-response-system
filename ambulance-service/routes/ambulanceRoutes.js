@@ -9,10 +9,9 @@ router.get("/", (req, res) => {
     });
 });
 
+// Get ambulances
 router.get("/ambulances", (req, res) => {
-
     db.query("SELECT * FROM ambulances", (err, results) => {
-
         if (err) {
             return res.status(500).json({
                 message: "Database error",
@@ -24,16 +23,52 @@ router.get("/ambulances", (req, res) => {
     });
 });
 
+// Add ambulance
+router.post("/ambulances", (req, res) => {
+    const { vehicleNumber, driver, status } = req.body;
+
+    const sql = `
+        INSERT INTO ambulances (vehicleNumber, driver, status)
+        VALUES (?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [vehicleNumber, driver, status || "Available"],
+        (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    message: "Database error",
+                    error: err.message
+                });
+            }
+
+            res.json({
+                message: "Ambulance added successfully",
+                ambulance: {
+                    id: result.insertId,
+                    vehicleNumber: vehicleNumber,
+                    driver: driver,
+                    status: status || "Available"
+                }
+            });
+        }
+    );
+});
+
+// Ambulance → Hospital
 router.get("/find-hospital", async (req, res) => {
     try {
-        const response = await fetch("http://hospital-service:3003/hospitals");
+        const response = await fetch(
+            "http://hospital-service:3003/hospitals"
+        );
 
         const hospitals = await response.json();
 
         const availableHospital = hospitals.find(
-           hospital =>
-    hospital.availableBeds > 0 &&
-    hospital.emergencyAvailable === 1
+            hospital =>
+                hospital.availableBeds > 0 &&
+                hospital.emergencyAvailable === 1
         );
 
         if (!availableHospital) {
