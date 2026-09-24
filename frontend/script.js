@@ -264,27 +264,78 @@ async function findHospital() {
 async function sendNotification() {
 
     try {
+
+        // Get emergency details
+        let emergencyRes = await fetch(emergencyAPI + "/emergencies");
+        let emergencies = await emergencyRes.json();
+
+        if (emergencies.length === 0) {
+            showMessage("No emergency record found");
+            return;
+        }
+
+        let emergency = emergencies[emergencies.length - 1];
+
+        // Get ambulance details
+        let ambulanceRes = await fetch(ambulanceAPI + "/ambulances");
+        let ambulances = await ambulanceRes.json();
+
+        if (ambulances.length === 0) {
+            showMessage("No ambulance record found");
+            return;
+        }
+
+        let ambulance = ambulances[0];
+
+        // Get hospital details
+        let hospitalRes = await fetch(hospitalAPI + "/hospitals");
+        let hospitals = await hospitalRes.json();
+
+        if (hospitals.length === 0) {
+            showMessage("No hospital record found");
+            return;
+        }
+
+        let hospital = hospitals[0];
+
+        // Create meaningful notification message
+        let message =
+            emergency.type + " at " +
+            emergency.location +
+            ". Patient is being transported by ambulance " +
+            ambulance.vehicleNumber +
+            " to " +
+            hospital.name +
+            ".";
+
+        // Send notification
         let res = await fetch(hospitalAPI + "/notify", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                message: "Emergency patient arriving"
+                message: message
             })
         });
 
         let data = await res.json();
 
-        showMessage(data.message || "Notification sent successfully");
+        showMessage(
+            data.message ||
+            "Notification sent successfully: " + message
+        );
 
         loadNotifications();
 
     } catch (error) {
+
+        console.error(error);
+
         showMessage("Error sending notification");
+
     }
 }
-
 
 // ================= SYSTEM RESPONSE =================
 
