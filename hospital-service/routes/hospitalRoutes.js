@@ -72,6 +72,9 @@ router.post("/hospitals", (req, res) => {
 // Hospital → Notification
 router.post("/notify", async (req, res) => {
     try {
+
+        const message = req.body.message;
+
         const response = await fetch(
             "http://notification-service:3004/notifications",
             {
@@ -80,7 +83,7 @@ router.post("/notify", async (req, res) => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    message: "Hospital is ready for emergency patient",
+                    message: message,
                     hospital: "City Care Hospital",
                     status: "Ready"
                 })
@@ -95,11 +98,11 @@ router.post("/notify", async (req, res) => {
         });
 
     } catch (error) {
+
         res.status(500).json({
             message: "Could not communicate with Notification Service",
             error: error.message
         });
+
     }
 });
-
-module.exports = router;
